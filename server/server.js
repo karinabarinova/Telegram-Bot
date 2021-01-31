@@ -14,18 +14,26 @@ app.get('/', (req, res) => {
     res.send('Success');
 })
 
-app.post('/handler', (req, res) => {
-    console.log(req.body)
-    console.log("eeee")
-    axios.post(baseUprl + '/bot' + process.env.TELEGRAM_TOKEN + '/sendMessage', {chat_id: req.body.message.chat.id, text: 'hello'})
-        .then((resp) => {
-            console.log(resp.status)
-
-        })
-        .catch((erorr) => {
-            console.log(erorr)
-        })
-    res.send('Success');
+app.post('/handler',  async (req, res) => {
+    if (req.body.message) {
+        const exists = await user.findOne( { where: { telegram_id: req.body.message.from.id} })
+        if (!exists) {
+            const {id, first_name, last_name, username } = req.body.message.from;
+            await user.create( {first_name, last_name, username, telegram_id: id } );
+        } else {
+            console.log("User exists")
+        }
+        
+    
+        axios.post( baseUprl + '/bot' + process.env.TELEGRAM_TOKEN + '/sendMessage', {chat_id: req.body.message.chat.id, text: 'hello'})
+            .then((resp) => {
+                console.log(resp.status)
+            })
+            .catch((erorr) => {
+                console.log(erorr)
+            })
+        res.send('Success');
+    }
 })
 
 app.post('/:token/setWebhook', (req, res) => {
