@@ -21,7 +21,7 @@ app.post('/handler',  async (req, res) => {
             const {id, first_name, last_name, username } = req.body.message.from;
             await user.create( {first_name, last_name, username, telegram_id: id } );
         } else {
-            console.log("User exists")
+            console.log(exists.dataValues.id + " send some message");
         }
         
     
