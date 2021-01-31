@@ -1,11 +1,12 @@
 require('dotenv').config()
 const axios = require('axios')
-const basuprl = 'https://api.telegram.org'
+const baseUprl = 'https://api.telegram.org'
 const express = require('express');
 const app = express()
 const port = 3000;
 
 app.use(require('body-parser').json())
+
 app.get('/', (req, res) => {
     res.send('Success');
 })
@@ -13,7 +14,7 @@ app.get('/', (req, res) => {
 app.post('/handler', (req, res) => {
     console.log(req.body)
     console.log("eeee")
-    axios.post(basuprl + '/bot' + process.env.TELEGRAM_TOKEN + '/sendMessage', {chat_id: req.body.message.chat.id, text: 'hello'})
+    axios.post(baseUprl + '/bot' + process.env.TELEGRAM_TOKEN + '/sendMessage', {chat_id: req.body.message.chat.id, text: 'hello'})
         .then((resp) => {
             console.log(resp.status)
 
@@ -25,21 +26,22 @@ app.post('/handler', (req, res) => {
 })
 
 app.post('/:token/setWebhook', (req, res) => {
-    console.log(req.body.url)
-    if (req.body && req.body.url && req.params.token === process.env.TELEGRAM_TOKEN) {
-        axios.post(basuprl + '/bot' + req.params.token + '/setWebhook', {url: req.body.url})
-            .then((resp) => {
-                console.log(resp.status)
 
+    if (req.body && req.body.url && req.params.token === process.env.TELEGRAM_TOKEN) {
+        axios.post(baseUprl + '/bot' + req.params.token + '/setWebhook', {url: req.body.url})
+            .then((resp) => {
+                console.log(resp)
+                res.send("Success")
             })
             .catch((erorr) => {
                 console.log(erorr)
+                res.status(400).send("Error")
             })
-}
-    res.send('Ok')
+} else {
+        res.status(400).send("Wrong bot token")
+    }
 })
 
 app.listen(port, () => {
-    console.log(process.env.TELEGRAM_TOKEN)
     console.log('server started ' + port)
 })
