@@ -5,6 +5,8 @@ const baseUprl = 'https://api.telegram.org'
 const express = require('express');
 const app = express()
 const port = 3000;
+const Message = require('../telegram/message');
+const message = new Message();
 
 const user = require('../models/user.model')
 
@@ -25,7 +27,7 @@ app.post('/handler',  async (req, res) => {
         }
         
     
-        axios.post( baseUprl + '/bot' + process.env.TELEGRAM_TOKEN + '/sendMessage', {chat_id: req.body.message.chat.id, text: 'hello'})
+        axios.post( baseUprl + '/bot' + process.env.TELEGRAM_TOKEN + '/sendMessage', {chat_id: req.body.message.chat.id, text: 'hello', reply_markup: message.getInlineKeyboardMarkup('text')})
             .then((resp) => {
                 console.log(resp.status)
             })
@@ -33,6 +35,10 @@ app.post('/handler',  async (req, res) => {
                 console.log(erorr)
             })
         res.send('Success');
+    } else if (req.body.callback_query !== 'undefined') {
+        //callback_data
+        console.log(req.body.callback_query.data);
+
     }
 })
 
