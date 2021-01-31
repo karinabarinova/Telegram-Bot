@@ -1,9 +1,12 @@
 require('dotenv').config()
+const db = require('../db/db');
 const axios = require('axios')
 const baseUprl = 'https://api.telegram.org'
 const express = require('express');
 const app = express()
 const port = 3000;
+
+const user = require('../models/user.model')
 
 app.use(require('body-parser').json())
 
@@ -44,4 +47,5 @@ app.post('/:token/setWebhook', (req, res) => {
 
 app.listen(port, () => {
     console.log('server started ' + port)
+    
 })
